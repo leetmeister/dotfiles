@@ -1,0 +1,23 @@
+[alias]
+    dog = log --decorate --oneline --graph
+    flog = log --follow -p --
+[core]
+    editor = code --wait
+[diff]
+    tool = vscode
+[difftool]
+    prompt = false
+[difftool "vscode"]
+    cmd = code --wait --diff "$LOCAL" "$REMOTE"
+[init]
+    defaultBranch = main
+[merge]
+    tool = vscode
+[mergetool]
+    keepBackup = false
+    prompt = false
+[mergetool "vscode"]
+    cmd = code --wait "$MERGED"
+[user]
+    name = Leetmeister
+    email = leetmeister@gmail.com
