@@ -1,23 +1,27 @@
 # dotfiles
 Personal dotfiles for configuring Linux dev environment
 
-- [ ] Set up PowerShell environment
-  - [ ] Define profile.ps1 (OneDrive synced)
-  - [ ] Define dotfiles/install.ps1
-- [ ] Set up ZSH environment
-  - [ ] Customize .zshrc from oh-my-zsh lib:
-    - [ ] [directories.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/directories.zsh)
-    - [ ] [history.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh)
-    - [ ] [key-bindings.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/key-bindings.zsh)
-    - [ ] [completion.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh)
-  - [ ] Define install.sh
+- [x] Set up PowerShell environment
+  - [x] Define profile.ps1
+    - [x] Merge WindowsPowerShell/profile.ps1 with dotfiles/profile.ps1
+    - [x] Delegate profile.ps1 to OneDrive sync instead of dotfiles
+  - [x] Define dotfiles/install.ps1
+    - [x] Link .gitconfig file
+- [x] Set up ZSH environment
+  - [x] Customize .zshrc from oh-my-zsh lib:
+    - [x] [directories.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/directories.zsh)
+    - [x] [history.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh)
+    - [x] [key-bindings.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/key-bindings.zsh)
+    - [x] [completion.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh)
+  - [x] Define install.sh
+    - [x] Assuming public dotfiles repo, also install prereqs, gcm, and zsh
 - [ ] Configure starship.toml
   - [ ] Tweak color scheme
-- [ ] Add .gitconfig
-- [ ] Check Linux prerequisites
-  - [ ] curl
-  - [ ] git
-  - [ ] ln
+- [x] Add .gitconfig
+- [x] Check Linux prerequisites
+  - [x] curl
+  - [x] git
+  - [x] ln
   - [x] wsl
 
 ``` bash
