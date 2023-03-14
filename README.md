@@ -1,177 +1,122 @@
 # dotfiles
-Personal dotfiles for configuring Linux dev environment
 
-- [x] Set up PowerShell environment
-  - [x] Define profile.ps1
-    - [x] Merge WindowsPowerShell/profile.ps1 with dotfiles/profile.ps1
-    - [x] Delegate profile.ps1 to OneDrive sync instead of dotfiles
-  - [x] Define dotfiles/install.ps1
-    - [x] Link .gitconfig file
-- [x] Set up ZSH environment
-  - [x] Customize .zshrc from oh-my-zsh lib:
-    - [x] [directories.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/directories.zsh)
-    - [x] [history.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh)
-    - [x] [key-bindings.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/key-bindings.zsh)
-    - [x] [completion.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh)
-  - [x] Define install.sh
-    - [x] Assuming public dotfiles repo, also install prereqs, gcm, and zsh
-- [ ] Configure starship.toml
-  - [ ] Tweak color scheme
-- [x] Add .gitconfig
-- [x] Check Linux prerequisites
-  - [x] curl
-  - [x] git
-  - [x] ln
-  - [x] wsl
+Personal [dotfiles](https://dotfiles.github.io/) for configuring Windows & Linux dev environments:
 
-``` bash
-# libicu is needed for gcm
-sudo apt install curl git libicu70 zsh
+- For Windows:
+  - [Visual Studio Code](https://code.visualstudio.com/Download)
+  - [Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/install)
+  - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.3)
+  - [Starship](https://starship.io)
+- For Linux (Ubuntu/Debian):
+  - [VS Code Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+  - [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install)
+  - [Zsh](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH)
+  - [Starship](https://starship.io)
 
-# Download latest GCM package from https://github.com/GitCredentialManager/git-credential-manager/releases/latest
-curl -Lo gcm.latest.deb https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.785/gcm-linux_amd64.2.0.785.deb
-dpkg -i gcm.latest.deb
+## Usage
 
-# Change default shell to ZSH
-chsh -s $(which zsh)
+### Prerequisites
+
+To run the installation scripts:
+
+- Latest version of [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for cloning this repo.
+- For Windows, the built-in [Windows PowerShell (5.1)](https://learn.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-7.3) is sufficient to execute [`install.ps1`](./install.ps1).
+- For Linux, an apt-based distro (e.g. Ubuntu, Debian) with [bash](https://www.gnu.org/software/bash/manual/html_node/index.html).
+
+### Manual install on Windows
+
+From a PowerShell prompt that is **run as administrator**:
+
+```ps1
+git clone https://github.com/leetmeister/dotfiles.git $HOME\dotfiles
+& "$HOME\dotfiles\install.ps1" # [ -Force | -WhatIf | -Confirm ]
 ```
 
-## Default bindkey map for emacs
+To get help:
+
+```ps1
+Get-Help $HOME\dotfiles\install.ps1
+```
+
+### Manual install on Linux
+
 ```bash
-"^@" set-mark-command
-"^A" beginning-of-line
-"^B" backward-char
-"^D" delete-char-or-list
-"^E" end-of-line
-"^F" forward-char
-"^G" send-break
-"^H" backward-delete-char
-"^I" expand-or-complete
-"^J" accept-line
-"^K" kill-line
-"^L" clear-screen
-"^M" accept-line
-"^N" down-line-or-history
-"^O" accept-line-and-down-history
-"^P" up-line-or-history
-"^Q" push-line
-"^R" history-incremental-search-backward
-"^S" history-incremental-search-forward
-"^T" transpose-chars
-"^U" kill-whole-line
-"^V" quoted-insert
-"^W" backward-kill-word
-"^X^B" vi-match-bracket
-"^X^F" vi-find-next-char
-"^X^J" vi-join
-"^X^K" kill-buffer
-"^X^N" infer-next-history
-"^X^O" overwrite-mode
-"^X^R" _read_comp
-"^X^U" undo
-"^X^V" vi-cmd-mode
-"^X^X" exchange-point-and-mark
-"^X*" expand-word
-"^X=" what-cursor-position
-"^X?" _complete_debug
-"^XC" _correct_filename
-"^XG" list-expand
-"^Xa" _expand_alias
-"^Xc" _correct_word
-"^Xd" _list_expansions
-"^Xe" _expand_word
-"^Xg" list-expand
-"^Xh" _complete_help
-"^Xm" _most_recent_file
-"^Xn" _next_tags
-"^Xr" history-incremental-search-backward
-"^Xs" history-incremental-search-forward
-"^Xt" _complete_tag
-"^Xu" undo
-"^X~" _bash_list-choices
-"^Y" yank
-"^[^D" list-choices
-"^[^G" send-break
-"^[^H" backward-kill-word
-"^[^I" self-insert-unmeta
-"^[^J" self-insert-unmeta
-"^[^L" clear-screen
-"^[^M" self-insert-unmeta
-"^[^_" copy-prev-word
-"^[ " expand-history
-"^[!" expand-history
-"^[\"" quote-region
-"^[\$" spell-word
-"^['" quote-line
-"^[," _history-complete-newer
-"^[-" neg-argument
-"^[." insert-last-word
-"^[/" _history-complete-older
-"^[0" digit-argument
-"^[1" digit-argument
-"^[2" digit-argument
-"^[3" digit-argument
-"^[4" digit-argument
-"^[5" digit-argument
-"^[6" digit-argument
-"^[7" digit-argument
-"^[8" digit-argument
-"^[9" digit-argument
-"^[<" beginning-of-buffer-or-history
-"^[>" end-of-buffer-or-history
-"^[?" which-command
-"^[A" accept-and-hold
-"^[B" backward-word
-"^[C" capitalize-word
-"^[D" kill-word
-"^[F" forward-word
-"^[G" get-line
-"^[H" run-help
-"^[L" down-case-word
-"^[N" history-search-forward
-"^[OA" up-line-or-history
-"^[OB" down-line-or-history
-"^[OC" forward-char
-"^[OD" backward-char
-"^[OF" end-of-line
-"^[OH" beginning-of-line
-"^[P" history-search-backward
-"^[Q" push-line
-"^[S" spell-word
-"^[T" transpose-words
-"^[U" up-case-word
-"^[W" copy-region-as-kill
-"^[[200~" bracketed-paste
-"^[[2~" overwrite-mode
-"^[[3~" delete-char
-"^[[A" up-line-or-history
-"^[[B" down-line-or-history
-"^[[C" forward-char
-"^[[D" backward-char
-"^[_" insert-last-word
-"^[a" accept-and-hold
-"^[b" backward-word
-"^[c" capitalize-word
-"^[d" kill-word
-"^[f" forward-word
-"^[g" get-line
-"^[h" run-help
-"^[l" down-case-word
-"^[n" history-search-forward
-"^[p" history-search-backward
-"^[q" push-line
-"^[s" spell-word
-"^[t" transpose-words
-"^[u" up-case-word
-"^[w" copy-region-as-kill
-"^[x" execute-named-cmd
-"^[y" yank-pop
-"^[z" execute-last-named-cmd
-"^[|" vi-goto-column
-"^[~" _bash_complete-word
-"^[^?" backward-kill-word
-"^_" undo
-" "-"~" self-insert
-"^?" backward-delete-char
-"\M-^@"-"\M-^?" self-insert
+git clone https://github.com/leetmeister/dotfiles.git $HOME/dotfiles
+sudo $HOME/dotfiles/install.sh # [ --no-deps | --no-zsh | --no-starship | --no-gcm ]
 ```
+
+### Automatically apply to VS Code dev containers
+
+Update the [settings.json `dotfiles` properties](https://code.visualstudio.com/docs/devcontainers/containers#_personalizing-with-dotfile-repositories):
+
+```json
+{
+  "dotfiles.repository": "leetmeister/dotfiles",
+  "dotfiles.targetPath": "~/dotfiles",
+  "dotfiles.installCommand": "~/dotfiles/install.sh"
+}
+```
+
+These should then be automatically synced via GitHub/Microsoft account [settings sync](https://code.visualstudio.com/docs/getstarted/settings#_settings-sync).
+
+## Additional configuration notes
+
+### MacOS
+
+No install script for MacOS but most things can be installed manually through [Homebrew](https://brew.sh/), bootstrapping through [Terminal](https://support.apple.com/guide/terminal/welcome/mac):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew tap homebrew/cask-fonts
+brew install font-cascadia-code
+brew install cask iterm2
+brew install git zsh starship git-credential-manager
+```
+
+That leaves configuration tasks that can be inferred from [`install.sh`](./install.sh):
+
+- Git clone the zsh plugins into `$HOME/.zsh_plugins/`
+  - <https://github.com/zsh-users/zsh-autosuggestions.git>
+  - <https://github.com/zsh-users/zsh-syntax-highlighting.git>
+- Apply the `.gitconfig`, `.zshrc`, and `starship.toml` dotfiles.
+  - To view dotfiles in Finder, use `Cmd+Shift+.` to toggle showing `.*` files.
+- Git config the system to use GCM.
+
+There are also customizations to be made to iTerm:
+
+- *iTerm → Preferences → Profiles → Colors → Color Presets*
+  - Some color schemes to use: <https://iterm2colorschemes.com/>
+- *iTerm → Preferences → Profiles → Text → Font*
+  - Select the installed `Caskaydia Cove NF` font.
+
+### PowerShell profiles
+
+These are not included in dotfiles as they are already being synced via OneDrive under:
+
+- `%USERPROFILE%\OneDrive\Documents`
+  - `WindowsPowerShell\Profile.ps1`
+  - `PowerShell\Profile.ps1` (if PowerShell 7 is additionally installed)
+
+### Windows Terminal settings
+
+The [`.windows_terminal/settings.json`](./.windows_terminal/settings.json) file will need to be customized to be appropriate for which shells are installed on the target device, and is not automatically installed as part of the install.ps1 script.
+
+The Windows Terminal [settings.json](https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-general) file is usually under `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` and can be replaced there.
+
+To distinguish between the various shells, custom themes can be generated via <https://windowsterminalthemes.dev/> per shell.
+
+## References
+
+| Topic | Link |
+|  ---  |  --- |
+| Bash Scripting Cheatsheet | <https://devhints.io/bash>
+| Dev Container Templates   | <https://containers.dev/templates>
+| Git Configuration         | <https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration>
+| Git Credential Manager    | <https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/configuration.md>
+| Oh My Zsh Wiki            | <https://github.com/ohmyzsh/ohmyzsh/wiki>
+| PowerShell 7              | <https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.3>
+| PowerShell Profiles       | <https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles>
+| Starship Configurations   | <https://starship.rs/config>
+| VS Code Profiles          | <https://code.visualstudio.com/docs/editor/profiles>
+| Windows Terminal Settings | <https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-general>
+| Zsh Manual                | <https://zsh.sourceforge.io/Doc/Release/zsh_toc.html>
