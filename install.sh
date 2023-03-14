@@ -134,11 +134,11 @@ if [[ -z "$NO_GCM" ]]; then
   dpkg -i gcm.latest.deb
 
   if [[ -n "$IS_WSL" ]]; then
-    msg "${YELLOW}[WARN]${NOFORMAT}: Ensure that Windows has git-credential-manager-core.exe installed for WSL ..."
-    git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager-core.exe"
+    msg "${YELLOW}[WARN]${NOFORMAT}: Ensure that Windows has git-credential-manager.exe installed for WSL ..."
+    git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
   else
     echo "Configuring Git to use GCM with cache credentialstore for oauth and basic auth ..."
-    git config --system credential.helper "$(which git-credential-manager-core)"
+    git config --system credential.helper "$(which git-credential-manager)"
     git config --system credential.credentialstore "cache"
     git config --system credential.githubauthmodes "oauth, basic"
   fi
