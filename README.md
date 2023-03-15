@@ -117,6 +117,8 @@ To distinguish between the various shells, custom themes can be generated via <h
 | PowerShell 7              | <https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.3>
 | PowerShell Profiles       | <https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles>
 | Starship Configurations   | <https://starship.rs/config>
+| Terminal Color Schemes    | <https://github.com/mbadolato/iTerm2-Color-Schemes>
 | VS Code Profiles          | <https://code.visualstudio.com/docs/editor/profiles>
 | Windows Terminal Settings | <https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-general>
+| Windows Terminal Splash   | <https://terminalsplash.com/>
 | Zsh Manual                | <https://zsh.sourceforge.io/Doc/Release/zsh_toc.html>
