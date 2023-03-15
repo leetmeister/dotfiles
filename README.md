@@ -42,7 +42,7 @@ Get-Help $HOME\dotfiles\install.ps1
 
 ```bash
 git clone https://github.com/leetmeister/dotfiles.git $HOME/dotfiles
-sudo $HOME/dotfiles/install.sh # [ --no-deps | --no-zsh | --no-starship | --no-gcm ]
+$HOME/dotfiles/install.sh # [ --no-deps | --no-zsh | --no-starship | --no-gcm ]
 ```
 
 ### Automatically apply to VS Code dev containers

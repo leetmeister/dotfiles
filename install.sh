@@ -9,7 +9,37 @@ usage() {
   cat << EOF
 Usage: ${SCRIPT_NAME} [OPTIONS]
 
-Script description here.
+Install dev experience prereqs and dotfiles.
+
+Minimally, it always links the dotfiles/.gitconfig to \$HOME/.gitconfig (global config).
+Depending on options, it will also:
+
+1. Install the following apt packages, which can be skipped with the --no-deps flag.
+   Will prompt for sudo elevation:
+    - curl
+    - coreutils (for ln)
+    - git
+    - jq (if installing Git Credential Manager)
+    - libicu70 (if installing Git Credential Manager)
+
+2. Install and configure ZSH, which can be skipped with the --no-zsh flag.
+    - Install the zsh package (will prompt for sudo elevation)
+    - Set zsh as the default shell
+    - Install the zsh-autosuggestions and zsh-syntax-highlighting plugins
+    - Link dotfiles/.zshrc to \$HOME/.zshrc
+
+3. Install the Starship prompt, which can be skipped with the --no-starship flag.
+    - Install Starship from starship.rs install script (self-elevates)
+    - Link dotfiles/.starship/starship.toml to \$HOME/.starship/starship.toml
+      - Note that dotfiles/.zshrc uses \$STARSHIP_CONFIG to reference this path
+    - [WSL only] Add 'git_status.windows_starship' configuration to starship.toml
+
+4. Install the latest Git Credential Manager (GCM) release from GitHub, which can
+   be skipped with the --no-gcm flag. Will prompt for sudo elevation.
+    - [WSL] Configure Windows GCM as default Git credential.helper at --system scope
+      if in WSL
+    - [Non-WSL] Download and install the GCM .deb release, then configure
+      it as the default Git credential.helper at --system scope
 
 Available options:
 --no-deps       Do not install apt dependencies needed by components in this script
@@ -43,6 +73,11 @@ die() {
 }
 
 parse_params() {
+  NO_DEPS=0
+  NO_GCM=0
+  NO_STARSHIP=0
+  NO_ZSH=0
+
   while :; do
     case "${1-}" in
     -h | --help) usage ;;
@@ -64,13 +99,12 @@ parse_params "$@"
 setup_colors
 
 # Validate permissions needed to perform installs
-if [[ -n ${NO_DEP} && -n ${NO_GCM} && ${NO_STARSHIP} && -n ${NO_ZSH} ]]; then
+if [[ (${NO_DEPS} = 1) && (${NO_GCM} = 1) && (${NO_STARSHIP} = 1) && (${NO_ZSH} = 1) ]]; then
   msg "${BLUE}[INFO]${NOFORMAT}: All install actions skipped, only applying .gitconfig"
-elif [[ "$EUID" != 0 ]]; then
-  die "${RED}[ERROR]${NOFORMAT}: ${SCRIPT_NAME} needs to be run as root or under 'sudo' to perfom installs"
 fi
 
 # The presence of /proc/sys/fs/binfmt_misc/WSLInterop file or /run/WSL directory suggests the Linux instance is running under WSL
+IS_WSL=0
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" || -d "/run/WSL" ]]; then
   echo "Detected that script is running under WSL ..."
   IS_WSL=1
@@ -80,67 +114,79 @@ fi
 ln -nfs "${SCRIPT_DIR}/.gitconfig" "$HOME/.gitconfig"
 
 # Install prerequisite packages
-if [[ -z ${NO_DEPS} ]]; then
-  DEPS="curl ln git"
-  if [[ -z ${NO_GCM} ]]; then
-    DEPS="${DEPS} jq libicu70"
-  fi
-  echo "Installing required apt packages: ${DEPS} ..."
-  apt update
-  apt install "${DEPS}"
+DEPS="curl coreutils git"
+if [[ ${NO_GCM} = 0 ]]; then
+  DEPS="${DEPS} jq libicu70"
+fi
+if [[ ${NO_DEPS} = 1 ]]; then
+  echo "--no-deps specified, assume that required dependencies are already installed: ${DEPS}"
 else
-  echo "--no-deps specified, assume that required depencies are already installed: ${DEPS}"
+  echo "Installing required apt packages: ${DEPS} ..."
+  sudo apt update
+  sudo apt install ${DEPS}
 fi
 
 # Install and configure ZSH
-if [[ -z "$NO_ZSH" ]]; then
+if [[ ${NO_ZSH} = 1 ]]; then
+  echo "--no-zsh specified, not applying dotfiles/.zshrc"
+else
   echo "Installing ZSH as default shell ..."
-  apt install zsh
+  sudo apt install zsh
   chsh -s "$(which zsh)"
 
   echo "Cloning zsh-autosuggestions plugin from GitHub ..."
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.zsh_plugins/zsh-autosuggestions"
+  if [ -d "$HOME/.zsh_plugins/zsh-autosuggestions" ]; then
+    (cd "$HOME/.zsh_plugins/zsh-autosuggestions" && git pull )
+  else
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.zsh_plugins/zsh-autosuggestions"
+  fi
 
   echo "Cloning zsh-syntax-highlighting plugin from GitHub ..."
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.zsh_plugins/zsh-syntax-highlighting"
+  if [ -d "$HOME/.zsh_plugins/zsh-syntax-highlighting" ]; then
+    (cd "$HOME/.zsh_plugins/zsh-syntax-highlighting" && git pull )
+  else
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.zsh_plugins/zsh-syntax-highlighting"
+  fi
 
   echo "Linking dotfiles/.zshrc to local home ..."
   ln -nfs "${SCRIPT_DIR}/.zshrc" "$HOME/.zshrc"
-else
-  echo "--no-zsh specified, not applying dotfiles/.zshrc"
 fi
 
 # Install and configure Starship
-if [[ -z "$NO_STARSHIP" ]]; then
+if [[ ${NO_STARSHIP} = 1 ]]; then
+  echo "--no-starship specified, not applying dotfiles/.starship/starship.toml"
+else
   echo "Installing Starship prompt ..."
   curl -SsL https://starship.rs/install.sh | sh
 
   echo "Linking dotfiles/.starship/starship.toml to local home ..."
+  mkdir -p "$HOME/.starship"
   ln -nfs "${SCRIPT_DIR}/.starship/starship.toml" "$HOME/.starship/starship.toml"
 
-  if [[ -n "$IS_WSL" ]]; then
+  if [[ ${IS_WSL} = 1 ]]; then
     msg "${YELLOW}[WARN]${NOFORMAT}: Ensure that Windows has Starship installed for handling git_status in WSL ..."
-    starship config git_status.windows_starship '/mnt/c/Program Files/Starship/bin/starship.exe'
+    starship config git_status.windows_starship '/mnt/c/Program Files/starship/bin/starship.exe'
   fi
-else
-  echo "--no-starship specified, not applying dotfiles/.starship/starship.toml"
 fi
 
 # Install and configure Git Credential Manager (GCM)
-if [[ -z "$NO_GCM" ]]; then
-  GCM_VER=$(curl -sL https://api.github.com/repos/GitCredentialManager/git-credential-manager/releases/latest | jq -r ".tag_name" | cut -c1- )
-  echo "Installing latest Git Credential Manager (GCM) v${GCM_VER}..."
-  curl -Lo gcm.latest.deb https://github.com/GitCredentialManager/git-credential-manager/releases/download/v${GCM_VER}/gcm-linux_amd64.${GCM_VER}.deb
-  dpkg -i gcm.latest.deb
-
-  if [[ -n "$IS_WSL" ]]; then
+if [[ ${NO_GCM} = 1 ]]; then
+  echo "--no-gcm specified, not configuring GCM as credential.helper"
+else
+  if [[ ${IS_WSL} = 1 ]]; then
     msg "${YELLOW}[WARN]${NOFORMAT}: Ensure that Windows has git-credential-manager.exe installed for WSL ..."
-    git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
+    sudo git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
   else
+    GCM_VER=$(curl -sL https://api.github.com/repos/GitCredentialManager/git-credential-manager/releases/latest | jq -r ".tag_name" | cut -c2- )
+    echo "Installing latest Git Credential Manager (GCM) v${GCM_VER}..."
+    curl -Lo gcm.latest.deb https://github.com/GitCredentialManager/git-credential-manager/releases/download/v${GCM_VER}/gcm-linux_amd64.${GCM_VER}.deb
+    sudo dpkg -i gcm.latest.deb
+    rm gcm.latest.deb
+
     echo "Configuring Git to use GCM with cache credentialstore for oauth and basic auth ..."
-    git config --system credential.helper "$(which git-credential-manager)"
-    git config --system credential.credentialstore "cache"
-    git config --system credential.githubauthmodes "oauth, basic"
+    sudo git config --system credential.helper "$(which git-credential-manager)"
+    sudo git config --system credential.credentialstore "cache"
+    sudo git config --system credential.githubauthmodes "oauth, basic"
   fi
 fi
 

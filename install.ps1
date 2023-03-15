@@ -14,7 +14,7 @@
       - See https://github.com/$Organization/$Repository/releases/latest/
 
     Apply the following configurations:
-      - Configure GCM as default Git credential.helper (System) 
+      - Configure GCM as default Git credential.helper (System)
       - Link dotfiles/.gitconfig to $HOME/.gitconfig (Global)
       - Link dotfiles/.starship/starship.toml to $HOME/.starship/starship.toml
          - Note: Assumes Profile.ps1 has custom $env:STARSHIP_CONFIG set for it
