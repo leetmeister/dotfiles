@@ -68,9 +68,9 @@ No install script for MacOS but most things can be installed manually through [H
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew tap homebrew/cask-fonts
-brew install font-cascadia-code
+brew install font-caskaydia-cove-nerd-font
 brew install cask iterm2
-brew install git zsh starship git-credential-manager
+brew install git zsh starship
 ```
 
 That leaves configuration tasks that can be inferred from [`install.sh`](./install.sh):
@@ -80,14 +80,15 @@ That leaves configuration tasks that can be inferred from [`install.sh`](./insta
   - <https://github.com/zsh-users/zsh-syntax-highlighting.git>
 - Apply the `.gitconfig`, `.zshrc`, and `starship.toml` dotfiles.
   - To view dotfiles in Finder, use `Cmd+Shift+.` to toggle showing `.*` files.
-- Git config the system to use GCM.
+- ~~Git config the system to use GCM.~~
+  - The brew formula for GCM has been deprecated.
 
 There are also customizations to be made to iTerm:
 
 - *iTerm → Preferences → Profiles → Colors → Color Presets*
   - Some color schemes to use: <https://iterm2colorschemes.com/>
 - *iTerm → Preferences → Profiles → Text → Font*
-  - Select the installed `Caskaydia Cove NF` font.
+  - Select the installed `CaskaydiaCove Nerd Font` font.
 
 ### PowerShell profiles
 
