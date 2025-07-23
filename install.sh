@@ -114,9 +114,11 @@ fi
 ln -nfs "${SCRIPT_DIR}/.gitconfig" "$HOME/.gitconfig"
 
 # Install prerequisite packages
-DEPS="curl coreutils git"
-if [[ ${NO_GCM} = 0 ]]; then
-  DEPS="${DEPS} jq libicu70"
+DEPS="curl coreutils git jq"
+
+# Only add libicu70 for non-WSL systems where we actually install GCM
+if [[ ${NO_GCM} = 0 && ${IS_WSL} = 0 ]]; then
+  DEPS="${DEPS} libicu70"
 fi
 if [[ ${NO_DEPS} = 1 ]]; then
   echo "--no-deps specified, assume that required dependencies are already installed: ${DEPS}"
@@ -150,6 +152,14 @@ else
 
   echo "Linking dotfiles/.zshrc to local home ..."
   ln -nfs "${SCRIPT_DIR}/.zshrc" "$HOME/.zshrc"
+
+  echo "Creating .zshrc.local from template if it doesn't exist ..."
+  if [[ ! -f "$HOME/.zshrc.local" ]]; then
+    cp "${SCRIPT_DIR}/.zshrc.local.template" "$HOME/.zshrc.local"
+    echo "Created $HOME/.zshrc.local from template - customize it for your machine"
+  else
+    echo "$HOME/.zshrc.local already exists, skipping"
+  fi
 fi
 
 # Install and configure Starship

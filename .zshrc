@@ -207,3 +207,12 @@ fi
 export STARSHIP_CONFIG="$HOME/.starship/starship.toml"
 export STARSHIP_CACHE="$HOME/.starship/cache"
 eval "$(starship init zsh)"
+
+##======================================================================================
+## Source machine-specific configurations
+##======================================================================================
+
+# Source machine-specific configurations (not version controlled)
+if [[ -f "$HOME/.zshrc.local" ]]; then
+    source "$HOME/.zshrc.local"
+fi
